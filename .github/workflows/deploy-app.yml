@@ -43,8 +43,8 @@ jobs:
             .
             !venv/
 
-  deployDev:
-    name: Deploy App Development
+  deploy-dev:
+    name: Deploy App to Development
     permissions:
       contents: none
     runs-on: ubuntu-latest
@@ -68,12 +68,12 @@ jobs:
         with:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           
-  deployQA:
-      name: Deploy App QA
+  deploy-qa:
+      name: Deploy App to QA
       permissions:
         contents: none
       runs-on: ubuntu-latest
-      needs: deployDev
+      needs: deploy-dev
       environment:
         name: 'QA'
         url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -92,3 +92,20 @@ jobs:
           uses: azure/webapps-deploy@v2
           with:
             app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+  
+  release-to-prod:
+    name: Release to Production
+    needs: deploy-qa
+    runs-on: ubuntu-latest
+    environment:
+      name: 'Production'
+      url: 'https://${{ env.WEBAPP_NAME }}.azurewebsites.net/'
+
+    steps:
+    - name: Log into Azure CLI with service principal
+      uses: azure/login@v1.1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Swap slots
+      run: az webapp deployment slot swap -s ${{ vars.SLOT_NAME }} -n ${{ vars.AZURE_WEBAPP_NAME }} -g ${{ vars.RESOURCE_GROUP_NAME }}

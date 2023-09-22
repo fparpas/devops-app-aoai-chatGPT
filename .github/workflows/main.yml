@@ -35,8 +35,8 @@ jobs:
         with:
           inlineScript: |
             #!/bin/bash
-            az account set --subscription ${{ env.SUBSCRIPTION_ID }}
-            az group create --name ${{ env.RESOURCE_GROUP_NAME }} --location ${{ env.RESOURCE_GROUP_LOCATION }}
+            az account set --subscription ${{ vars.SUBSCRIPTION_ID }}
+            az group create --name ${{ vars.RESOURCE_GROUP_NAME }} --location ${{ vars.RESOURCE_GROUP_LOCATION }}
             echo "Azure resource group created"
 
   

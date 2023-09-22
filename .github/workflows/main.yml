@@ -17,12 +17,11 @@ jobs:
   Deploy:
     runs-on: ubuntu-latest
     environment: 
-      name: Development
+      name: ${{ inputs.Development }}
     steps:
       - name: Script Debug
         run: |
          echo  ${{ vars.RESOURCE_GROUP_NAME }} \
-         echo  ${{ secrets.AZURE_CREDENTIALS }}
          
       - name: Checkout
         uses: actions/checkout@v4.0.0

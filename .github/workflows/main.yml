@@ -35,6 +35,7 @@ jobs:
         uses: Azure/arm-deploy@v1.0.9
         with:
           scope: subscription
+          region: ${{ vars.RESOURCE_GROUP_LOCATION }}
           subscriptionId: ${{ vars.SUBSCRIPTION_ID }}
           resourceGroupName: ${{vars.RESOURCE_GROUP_NAME}}
           # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).

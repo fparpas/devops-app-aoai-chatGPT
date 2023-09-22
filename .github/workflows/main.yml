@@ -30,24 +30,16 @@ jobs:
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      - uses: Azure/CLI@v1
-        with:
-          inlineScript: |
-            #!/bin/bash
-            az account set --subscription ${{ vars.SUBSCRIPTION_ID }}
-            az group create --name ${{ vars.RESOURCE_GROUP_NAME }} --location ${{ vars.RESOURCE_GROUP_LOCATION }}
-            echo "Azure resource group created"
-            
+                  
       - name: Deploy Services with Bicep
         uses: Azure/arm-deploy@v1.0.9
         with:
-          scope: resourcegroup
+          scope: subscription
           subscriptionId: ${{ vars.SUBSCRIPTION_ID }}
           resourceGroupName: ${{vars.RESOURCE_GROUP_NAME}}
           # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).
           deploymentMode: Incremental
           template: infra/demo/main.bicep
-          parameters: searchServiceKey=${{secrets.OPEN_AI_KEY}} openAiKey=${{secrets.SEARCH_SERVICE_KEY}} authClientSecret=${{secrets.AUTH_CLIENT_SECRET}} authClientId=${{vars.AUTH_CLIENT_ID}}
+          parameters: resourceGroupName=${{ vars.RESOURCE_GROUP_NAME }} environmentName=${{ github.event.inputs.Environment }} searchServiceKey=${{secrets.OPEN_AI_KEY}} openAiKey=${{secrets.SEARCH_SERVICE_KEY}} authClientSecret=${{secrets.AUTH_CLIENT_SECRET}} authClientId=${{vars.AUTH_CLIENT_ID}}
 
   

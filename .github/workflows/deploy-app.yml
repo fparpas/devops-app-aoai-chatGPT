@@ -124,7 +124,7 @@ jobs:
     needs: deploy-staging
     runs-on: ubuntu-latest
     environment:
-      name: 'Production'
+      name: 'Staging-Production'
       url: 'https://${{ env.WEBAPP_NAME }}.azurewebsites.net/'
 
     steps:

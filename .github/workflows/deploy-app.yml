@@ -117,7 +117,7 @@ jobs:
           uses: azure/webapps-deploy@v2
           with:
             app-name: ${{ vars.AZURE_WEBAPP_NAME }}
-            slot-name: "${{ vars.SLOT_NAME }}"
+            slot-name: staging
             
   release-to-prod:
     name: Release to Production

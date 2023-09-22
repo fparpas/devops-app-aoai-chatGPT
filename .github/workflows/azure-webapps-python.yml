@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   build:
+    name: Build Application
     runs-on: ubuntu-latest
 
     steps:
@@ -43,7 +44,8 @@ jobs:
             .
             !venv/
 
-  deploy:
+  deployDev:
+    name: Deploy App Development
     permissions:
       contents: none
     runs-on: ubuntu-latest
@@ -66,3 +68,28 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          
+  deployQA:
+      name: Deploy App QA
+      permissions:
+        contents: none
+      runs-on: ubuntu-latest
+      needs: deployDev
+      environment:
+        name: 'QA'
+        url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+  
+      steps:
+        - name: Download artifact from build job
+          uses: actions/download-artifact@v3
+          with:
+            name: python-app
+            path: .
+        - uses: azure/login@v1
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+        - name: 'Deploy to Azure Web App'
+          id: deploy-to-webapp
+          uses: azure/webapps-deploy@v2
+          with:
+            app-name: ${{ env.AZURE_WEBAPP_NAME }}

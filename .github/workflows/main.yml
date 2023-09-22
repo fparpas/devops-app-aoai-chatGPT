@@ -15,6 +15,7 @@ on:
 
 jobs:
   Deploy:
+    name: Deploy ${{ github.event.inputs.Environment }} Environment
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.Environment }}
     steps:
@@ -22,6 +23,7 @@ jobs:
         run: |
          echo  ${{ vars.RESOURCE_GROUP_NAME }} \
          echo  ${{ github.event.inputs.Environment }} \
+         
       - name: Checkout
         uses: actions/checkout@v4.0.0
         
@@ -33,6 +35,7 @@ jobs:
         with:
           inlineScript: |
             #!/bin/bash
+            az account set ${{ env.SUBSCRIPTION_ID }}
             az group create --name ${{ env.RESOURCE_GROUP_NAME }} --location ${{ env.RESOURCE_GROUP_LOCATION }}
             echo "Azure resource group created"
 

@@ -100,7 +100,7 @@ jobs:
       runs-on: ubuntu-latest
       needs: deploy-qa
       environment:
-        name: 'Staging'
+        name: 'Staging-Production'
         url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
   
       steps:

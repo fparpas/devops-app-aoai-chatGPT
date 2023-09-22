@@ -38,5 +38,16 @@ jobs:
             az account set --subscription ${{ vars.SUBSCRIPTION_ID }}
             az group create --name ${{ vars.RESOURCE_GROUP_NAME }} --location ${{ vars.RESOURCE_GROUP_LOCATION }}
             echo "Azure resource group created"
+            
+	   - name: Deploy Services with Bicep
+        uses: Azure/arm-deploy@v1.0.9
+        with:
+          scope: resourcegroup
+          subscriptionId: ${{ vars.SUBSCRIPTION_ID }}
+          resourceGroupName: ${{env.RESOURCE_GROUP_NAME}}
+          # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).
+          deploymentMode: Incremental
+          template: 
+          parameters: # optional
 
   

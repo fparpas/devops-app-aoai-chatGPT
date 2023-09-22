@@ -19,6 +19,11 @@ jobs:
     environment: 
       name: ${{ inputs.Environment }} 
     steps:
+      - name: Script Debug
+        run: |
+         echo  ${{ env.RESOURCE_GROUP_NAME }} \
+         echo  ${{ secrets.AZURE_CREDENTIALS }}
+         
       - name: Checkout
         uses: actions/checkout@v4.0.0
         

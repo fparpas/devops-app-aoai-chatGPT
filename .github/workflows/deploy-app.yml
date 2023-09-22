@@ -117,6 +117,7 @@ jobs:
           uses: azure/webapps-deploy@v2
           with:
             app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+            slot-name: "${{ vars.SLOT_NAME }}"
             
   release-to-prod:
     name: Release to Production
@@ -133,4 +134,4 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Swap slots
-      run: az webapp deployment slot swap -s ${{ vars.SLOT_NAME }} -n ${{ vars.AZURE_WEBAPP_NAME }} -g ${{ vars.RESOURCE_GROUP_NAME }}
+      run: az webapp deployment slot swap --slot staging --target-slot production -n ${{ vars.AZURE_WEBAPP_NAME }} -g ${{ vars.RESOURCE_GROUP_NAME }}

@@ -47,7 +47,7 @@ jobs:
           resourceGroupName: ${{env.RESOURCE_GROUP_NAME}}
           # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).
           deploymentMode: Incremental
-          template: infra/main.bicep
-          parameters: infra/main-parameters.json
+          template: infra/demo/main.bicep
+          parameters: searchServiceKey=${{secrets.OPEN_AI_KEY}} openAiKey=${{secrets.SEARCH_SERVICE_KEY}} authClientSecret=${{secrets.AUTH_CLIENT_SECRET}} authClientId=${{secrets.AUTH_CLIENT_ID}}
 
   

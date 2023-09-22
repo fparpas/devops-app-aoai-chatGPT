@@ -1,7 +1,6 @@
 name: Build and Deploy App
 
 env:
-  AZURE_WEBAPP_NAME: 'app-backend-fiepm2myhapl6'  # set this to the name of your Azure Web App
   PYTHON_VERSION: '3.10'              # set this to the Python version to use
 
 on:
@@ -67,7 +66,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           
   deployQA:
       name: Deploy App QA
@@ -92,4 +91,4 @@ jobs:
           id: deploy-to-webapp
           uses: azure/webapps-deploy@v2
           with:
-            app-name: ${{ env.AZURE_WEBAPP_NAME }}
+            app-name: ${{ vars.AZURE_WEBAPP_NAME }}

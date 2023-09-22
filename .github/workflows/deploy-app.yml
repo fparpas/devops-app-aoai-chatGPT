@@ -125,7 +125,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: 'Staging-Production'
-      url: 'https://${{ env.WEBAPP_NAME }}.azurewebsites.net/'
+      url: 'https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net/'
 
     steps:
     - name: Log into Azure CLI with service principal

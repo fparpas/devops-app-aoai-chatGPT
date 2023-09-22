@@ -21,7 +21,7 @@ jobs:
       - name: Script Debug
         run: |
          echo  ${{ vars.RESOURCE_GROUP_NAME }} \
-         echo  ${{ inputs.Development }} \
+         echo  ${{ github.event.inputs.Development }} \
       - name: Checkout
         uses: actions/checkout@v4.0.0
         

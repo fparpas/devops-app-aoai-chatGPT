@@ -17,7 +17,7 @@ jobs:
   Deploy:
     runs-on: ubuntu-latest
     environment: 
-      name: ${{ inputs.Environment }} 
+      name: Development
     steps:
       - name: Script Debug
         run: |

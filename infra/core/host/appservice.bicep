@@ -125,8 +125,8 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
-resource appServiceSlot 'Microsoft.Web/sites/slots@2022-03-01' = if (!empty(includeSlotName)){
-  name: includeSlotName
+resource appServiceSlot 'Microsoft.Web/sites/slots@2022-03-01' = if (!(empty(includeSlotName)))    {
+  name: !empty(includeSlotName) ? includeSlotName : 'staging'
   location: location
   kind: 'app'
   parent: appService

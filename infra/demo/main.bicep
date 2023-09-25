@@ -49,7 +49,7 @@ param authClientSecret string
 // param principalId string = ''
 
 var abbrs = loadJsonContent('../abbreviations.json')
-var resourceToken = '${toLower(environmentName)}${toLower(uniqueString(subscription().id, environmentName, location))}'
+var resourceToken = '${toLower(environmentName)}-${toLower(uniqueString(subscription().id, environmentName, location))}'
 var tags = { 'azd-env-name': environmentName }
 
 // Organize resources in a resource group

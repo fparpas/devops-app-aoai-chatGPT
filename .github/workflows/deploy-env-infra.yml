@@ -1,4 +1,4 @@
-name: Deploy Infrastructure Environment
+name: Provison Infrastructure Environment
 
 on: 
    workflow_dispatch:

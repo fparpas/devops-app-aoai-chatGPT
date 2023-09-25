@@ -1,6 +1,7 @@
 param name string
 param location string = resourceGroup().location
 param tags object = {}
+param includeSlotName string = ''
 
 // Reference Properties
 param applicationInsightsName string = ''
@@ -124,8 +125,8 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
-resource appServiceSlot 'Microsoft.Web/sites/slots@2022-03-01' = {
-  name: 'staging'
+resource appServiceSlot 'Microsoft.Web/sites/slots@2022-03-01' = if (!empty(includeSlotName)){
+  name: includeSlotName
   location: location
   kind: 'app'
   parent: appService

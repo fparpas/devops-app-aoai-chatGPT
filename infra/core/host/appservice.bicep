@@ -124,6 +124,32 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
+resource appServiceSlot 'Microsoft.Web/sites/slots@2022-03-01' = {
+  name: 'staging'
+  location: location
+  kind: 'app'
+  parent: appService
+  properties: {
+    serverFarmId: appServicePlanId
+    siteConfig: {
+      linuxFxVersion: linuxFxVersion
+      alwaysOn: alwaysOn
+      ftpsState: ftpsState
+      appCommandLine: appCommandLine
+      numberOfWorkers: numberOfWorkers != -1 ? numberOfWorkers : null
+      minimumElasticInstanceCount: minimumElasticInstanceCount != -1 ? minimumElasticInstanceCount : null
+      use32BitWorkerProcess: use32BitWorkerProcess
+      functionAppScaleLimit: functionAppScaleLimit != -1 ? functionAppScaleLimit : null
+      healthCheckPath: healthCheckPath
+      cors: {
+        allowedOrigins: union([ 'https://portal.azure.com', 'https://ms.portal.azure.com' ], allowedOrigins)
+      }
+    }
+    clientAffinityEnabled: clientAffinityEnabled
+    httpsOnly: true
+  }
+}
+
 resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = if (!(empty(keyVaultName))) {
   name: keyVaultName
 }

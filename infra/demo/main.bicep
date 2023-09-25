@@ -12,6 +12,7 @@ param location string = 'eastus'
 param appServicePlanName string = ''
 param backendServiceName string = ''
 param resourceGroupName string = ''
+param includeSlotName string = ''
 
 param searchServiceName string = 'cognitivesearchopenaipparpas'
 param searchServiceKey string = ''
@@ -101,6 +102,7 @@ module backend '../core/host/appservice.bicep' = {
     authClientSecret: authClientSecret
     authClientId: authClientId
     authIssuerUri: authIssuerUri
+    includeSlotName: includeSlotName
     appSettings: {
       // search
       AZURE_SEARCH_INDEX: searchIndexName

@@ -149,6 +149,65 @@ resource appServiceSlot 'Microsoft.Web/sites/slots@2022-03-01' = if (!(empty(inc
     clientAffinityEnabled: clientAffinityEnabled
     httpsOnly: true
   }
+  
+  identity: { type: managedIdentity ? 'SystemAssigned' : 'None' }
+
+  resource configAppSettings 'config' = {
+    name: 'appsettings'
+    properties: union(appSettings,
+      {
+        SCM_DO_BUILD_DURING_DEPLOYMENT: string(scmDoBuildDuringDeployment)
+        ENABLE_ORYX_BUILD: string(enableOryxBuild)
+      },
+      !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {},
+      !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {},
+      !empty(authClientSecret) ? { AUTH_CLIENT_SECRET: authClientSecret } : {}
+    )
+  }
+
+  resource configLogs 'config' = {
+    name: 'logs'
+    properties: {
+      applicationLogs: { fileSystem: { level: 'Verbose' } }
+      detailedErrorMessages: { enabled: true }
+      failedRequestsTracing: { enabled: true }
+      httpLogs: { fileSystem: { enabled: true, retentionInDays: 1, retentionInMb: 35 } }
+    }
+    dependsOn: [
+      configAppSettings
+    ]
+  }
+
+  resource configAuth 'config' = if (!(empty(authClientId))) {
+    name: 'authsettingsV2'
+    properties: {
+      globalValidation: {
+        requireAuthentication: true
+        unauthenticatedClientAction: 'RedirectToLoginPage'
+        redirectToProvider: 'azureactivedirectory'
+      }
+      identityProviders: {
+        azureActiveDirectory: {
+          enabled: true
+          registration: {
+            clientId: authClientId
+            clientSecretSettingName: 'AUTH_CLIENT_SECRET'
+            openIdIssuer: authIssuerUri
+          }
+          validation: {
+            defaultAuthorizationPolicy: {
+              allowedApplications: []
+            }
+          }
+        }
+      }
+      login: {
+        tokenStore: {
+          enabled: true
+        }
+      }
+    }
+  }
 }
 
 resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = if (!(empty(keyVaultName))) {

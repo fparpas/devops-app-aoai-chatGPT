@@ -1,0 +1,78 @@
+name: Provison All Infrastructure
+
+on: 
+   workflow_dispatch   
+
+jobs:
+  deploy-dev:
+    name: Deploy Development Environment
+    runs-on: ubuntu-latest
+    environment: Development
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.0.0
+        
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+                  
+      - name: Deploy Services with Bicep
+        uses: Azure/arm-deploy@v1.0.9
+        with:
+          scope: subscription
+          region: ${{ vars.RESOURCE_GROUP_LOCATION }}
+          subscriptionId: ${{ vars.SUBSCRIPTION_ID }}
+          resourceGroupName: ${{vars.RESOURCE_GROUP_NAME}}
+          # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).
+          deploymentMode: Incremental
+          template: infra/demo/main.bicep
+          parameters: resourceGroupName=${{ vars.RESOURCE_GROUP_NAME }} includeSlotName=${{ vars.SLOT_NAME }} environmentName=Development searchServiceKey=${{secrets.SEARCH_SERVICE_KEY}} openAiKey=${{secrets.OPEN_AI_KEY}} authClientSecret=${{secrets.AUTH_CLIENT_SECRET}} authClientId=${{vars.AUTH_CLIENT_ID}}
+  deploy-qa:
+    name: Deploy QA Environment
+    runs-on: ubuntu-latest
+    environment: QA
+    needs: deploy-dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.0.0
+        
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+                  
+      - name: Deploy Services with Bicep
+        uses: Azure/arm-deploy@v1.0.9
+        with:
+          scope: subscription
+          region: ${{ vars.RESOURCE_GROUP_LOCATION }}
+          subscriptionId: ${{ vars.SUBSCRIPTION_ID }}
+          resourceGroupName: ${{vars.RESOURCE_GROUP_NAME}}
+          # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).
+          deploymentMode: Incremental
+          template: infra/demo/main.bicep
+          parameters: resourceGroupName=${{ vars.RESOURCE_GROUP_NAME }} includeSlotName=${{ vars.SLOT_NAME }} environmentName=QA searchServiceKey=${{secrets.SEARCH_SERVICE_KEY}} openAiKey=${{secrets.OPEN_AI_KEY}} authClientSecret=${{secrets.AUTH_CLIENT_SECRET}} authClientId=${{vars.AUTH_CLIENT_ID}}
+
+  deploy-staging-production:
+    name: Deploy Staging(Slot) and Production Environment
+    runs-on: ubuntu-latest
+    environment: Staging-Production
+    needs: deploy-qa
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.0.0
+        
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+                  
+      - name: Deploy Services with Bicep
+        uses: Azure/arm-deploy@v1.0.9
+        with:
+          scope: subscription
+          region: ${{ vars.RESOURCE_GROUP_LOCATION }}
+          subscriptionId: ${{ vars.SUBSCRIPTION_ID }}
+          resourceGroupName: ${{vars.RESOURCE_GROUP_NAME}}
+          # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).
+          deploymentMode: Incremental
+          template: infra/demo/main.bicep
+          parameters: resourceGroupName=${{ vars.RESOURCE_GROUP_NAME }} includeSlotName=${{ vars.SLOT_NAME }} environmentName=Production searchServiceKey=${{secrets.SEARCH_SERVICE_KEY}} openAiKey=${{secrets.OPEN_AI_KEY}} authClientSecret=${{secrets.AUTH_CLIENT_SECRET}} authClientId=${{vars.AUTH_CLIENT_ID}}
